@@ -58,6 +58,72 @@ class Api {
 		$this->_http->setBody($postData);
 		return $this->_http->sendRequest(); 
 	}
+	
+    /**
+     * 	Actual call to curl helper to get a payment using PayPal REST APIs.
+     *
+     * 	Reset curl helper.
+     *	Set default PayPal headers.
+     * 	Set API call specific headers.
+     *	Set curl url.
+     *
+     * 	@param array $postData Url to be called using curl
+     * 	@return array PayPal REST execute response
+     */
+    private function _getOrderDetails($order_id) {
+        $this->_http->resetHelper();
+        $this->_setDefaultHeaders();
+        $this->_http->addHeader("Content-Type: application/json");
+        $this->_http->addHeader("Authorization: Bearer " . $this->_token);
+        $this->_http->setUrl($this->_createApiUrl("checkout/orders/" . $order_id));
+        return $this->_http->sendRequest();
+	}
+	
+	/**
+	 * 	Actual call to curl helper to execute a payment using PayPal REST APIs.
+	 *	
+	 * 	Reset curl helper.
+	 *	Set default PayPal headers.
+	 * 	Set API call specific headers.
+	 *	Set curl url.
+	 *	Set curl body.
+	 *
+     *	@param array $postData Url to be called using curl
+	 * 	@return array PayPal REST execute response
+	 */
+	private function _patchOrder($postData) {
+		$this->_http->resetHelper();
+		$this->_setDefaultHeaders();
+		$this->_http->addHeader("Content-Type: application/json");
+		$this->_http->addHeader("Authorization: Bearer " . $this->_token);
+		$this->_http->setUrl($this->_createApiUrl("checkout/orders/" . $_SESSION['order_id']));
+		$this->_http->setPatchBody($postData);
+		return $this->_http->sendRequest(); 
+	}
+	
+	/**
+	 * 	Actual call to curl helper to capture an order using PayPal REST APIs.
+	 *	
+	 * 	Reset curl helper.
+	 *	Set default PayPal headers.
+	 * 	Set API call specific headers.
+	 *	Set curl url.
+	 *	Set curl body.
+	 *
+     *	@param array $postData Url to be called using curl
+	 * 	@return array PayPal REST capture response
+	 */
+	private function _captureOrder() {
+		$this->_http->resetHelper();
+		$this->_setDefaultHeaders();
+		$this->_http->addHeader("Content-Type: application/json");
+		$this->_http->addHeader("Authorization: Bearer " . $this->_token);
+		$this->_http->setUrl($this->_createApiUrl("checkout/orders/" . $_SESSION['order_id'] . "/capture"));
+		$postData='{}';
+		$this->_http->setBody($postData);
+		//unset($_SESSION['order_id']);
+		return $this->_http->sendRequest(); 
+	}
 
 	/**
 	 * 	Create the PayPal REST endpoint url.
@@ -118,4 +184,67 @@ class Api {
 			]
 		];
 	}
+
+    /**
+     * 	Call private payment get class function to forward curl request to helper.
+     *
+     * 	Check for bearer token.
+     *	Call internal REST get order details function.
+     *
+     *  @param array $postData Url to be called using curl
+     * 	@return array Formatted API response
+     */
+    public function orderGet($order_id) {
+        if($this->_token === null) {
+            $this->_getToken();
+        }
+        $returnData = $this->_getOrderDetails($order_id);
+        return array(
+            "ack" => true,
+            "data" => $returnData
+        );
+	}
+
+	
+	/**
+	 * 	Call private patch order class function to forward curl request to helper.
+	 *	
+	 * 	Check for bearer token.
+	 *	Call internal REST patch order function.
+	 *
+	 *   @param array $postData Url to be called using curl
+	 * 	@return array Formatted API response
+	 */
+	public function orderPatch($postData) {
+		if($this->_token === null) {
+			$this->_getToken();
+		}
+		$returnData = $this->_patchOrder($postData);
+		return array(
+			"ack" => true,
+			"data" => $returnData
+		);
+	}
+	
+	/**
+	 * 	Call private capture order class function to forward curl request to helper.
+	 *	
+	 * 	Check for bearer token.
+	 *	Call internal REST capture order function.
+	 *
+     *   @param array $postData Url to be called using curl
+	 * 	@return array Formatted API response
+	 */
+	public function orderCapture() {
+		if($this->_token === null) {
+			$this->_getToken();
+		}
+		$returnData = $this->_captureOrder();
+		return array(
+			"ack" => true,
+			"data" => $returnData
+		);
+	}
+	
+	
 }
