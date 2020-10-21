@@ -9,7 +9,7 @@
             "email": "674954904@qq.com"
         }
     ],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "require": {
         "php": ">=5.6"
     },
