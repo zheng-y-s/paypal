@@ -15,7 +15,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Paypal\\Library\\": "src/Paypal/Library"
+            "Paypal\\": "src/Paypal"
         }
     },
     "repositories": {

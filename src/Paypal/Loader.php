@@ -1,5 +1,5 @@
 <?php
-namespace Paypal\Library;
+namespace Paypal;
 
 class Loader
 {
