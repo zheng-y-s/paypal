@@ -1,0 +1,27 @@
+{
+    "name": "zhengys/paypal",
+    "description": "paypal sdk",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "zhengys",
+            "email": "674954904@qq.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "Paypal\\Library": "src/Paypal/Library"
+        }
+    },
+    "repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "https://packagist.phpcomposer.com"
+        }
+    }
+}
