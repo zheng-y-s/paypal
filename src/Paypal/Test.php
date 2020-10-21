@@ -1,7 +1,7 @@
 <?php
 namespace Paypal;
 
-class Loader
+class Test
 {
 	public function index()
 	{
