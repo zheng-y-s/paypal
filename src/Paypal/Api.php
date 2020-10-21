@@ -118,10 +118,4 @@ class Api {
 			]
 		];
 	}
-
-	public function test()
-	{
-		return $this->_apiUrl;
-	}
-	
 }
