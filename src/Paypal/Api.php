@@ -1,6 +1,6 @@
 <?php
 namespace Paypal;
-use Paypal/Test;
+use Paypal\Test;
 
 class Api
 {
