@@ -16,7 +16,6 @@ class Api {
 
 	/**
 	 * 	Class constructor.
-	 *	
 	 */
 	public function __construct($scene, $client_id, $client_secret)
 	{
@@ -91,12 +90,12 @@ class Api {
      *	@param array $postData Url to be called using curl
 	 * 	@return array PayPal REST execute response
 	 */
-	private function _patchOrder($postData) {
+	private function _patchOrder($postData, $order_id) {
 		$this->_http->resetHelper();
 		$this->_setDefaultHeaders();
 		$this->_http->addHeader("Content-Type: application/json");
 		$this->_http->addHeader("Authorization: Bearer " . $this->_token);
-		$this->_http->setUrl($this->_createApiUrl("checkout/orders/" . $_SESSION['order_id']));
+		$this->_http->setUrl($this->_createApiUrl("checkout/orders/" . $order_id));
 		$this->_http->setPatchBody($postData);
 		return $this->_http->sendRequest(); 
 	}
@@ -113,12 +112,12 @@ class Api {
      *	@param array $postData Url to be called using curl
 	 * 	@return array PayPal REST capture response
 	 */
-	private function _captureOrder() {
+	private function _captureOrder($order_id) {
 		$this->_http->resetHelper();
 		$this->_setDefaultHeaders();
 		$this->_http->addHeader("Content-Type: application/json");
 		$this->_http->addHeader("Authorization: Bearer " . $this->_token);
-		$this->_http->setUrl($this->_createApiUrl("checkout/orders/" . $_SESSION['order_id'] . "/capture"));
+		$this->_http->setUrl($this->_createApiUrl("checkout/orders/" . $order_id . "/capture"));
 		$postData='{}';
 		$this->_http->setBody($postData);
 		//unset($_SESSION['order_id']);
@@ -177,12 +176,7 @@ class Api {
 		}
 		$returnData = $this->_createOrder($postData);
 		//$_SESSION['order_id'] = $returnData['id'];
-		return [
-			"ack" => true,
-			"data" => [
-				"id" => $returnData['id']
-			]
-		];
+		return $returnData;
 	}
 
     /**
@@ -199,10 +193,7 @@ class Api {
             $this->_getToken();
         }
         $returnData = $this->_getOrderDetails($order_id);
-        return array(
-            "ack" => true,
-            "data" => $returnData
-        );
+        return $returnData;
 	}
 
 	
@@ -215,15 +206,12 @@ class Api {
 	 *   @param array $postData Url to be called using curl
 	 * 	@return array Formatted API response
 	 */
-	public function orderPatch($postData) {
+	public function orderPatch($postData, $order_id) {
 		if($this->_token === null) {
 			$this->_getToken();
 		}
-		$returnData = $this->_patchOrder($postData);
-		return array(
-			"ack" => true,
-			"data" => $returnData
-		);
+		$returnData = $this->_patchOrder($postData, $order_id);
+		return $returnData;
 	}
 	
 	/**
@@ -235,15 +223,12 @@ class Api {
      *   @param array $postData Url to be called using curl
 	 * 	@return array Formatted API response
 	 */
-	public function orderCapture() {
+	public function orderCapture($order_id) {
 		if($this->_token === null) {
 			$this->_getToken();
 		}
-		$returnData = $this->_captureOrder();
-		return array(
-			"ack" => true,
-			"data" => $returnData
-		);
+		$returnData = $this->_captureOrder($order_id);
+		return $returnData;
 	}
 	
 	
